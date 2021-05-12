@@ -45,14 +45,12 @@
         <el-col :span="16">
           <el-form-item prop="verifyCode">
             <span class="svg-container">
-              <svg-icon icon-class="user" />
+              <svg-icon icon-class="lock" />
             </span>
             <el-input
               v-model="loginForm.verifyCode"
-              class="code-text"
-              name="verifyCode"
+              name="ver ifyCode"
               type="text"
-              maxlength="100"
               auto-complete="on"
               placeholder="请输入验证码"
             />

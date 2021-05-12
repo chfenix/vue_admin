@@ -7,8 +7,10 @@ import cn.solwind.admin.jwt.JwtTokenUtils;
 import cn.solwind.admin.jwt.TokenValue;
 import cn.solwind.admin.pojo.auth.AuthVO;
 import cn.solwind.admin.pojo.auth.CaptchaVO;
+import cn.solwind.admin.pojo.auth.ChangePwdVO;
 import cn.solwind.admin.pojo.auth.LoginVO;
 import cn.solwind.admin.service.auth.AuthService;
+import cn.solwind.admin.utils.IpUtil;
 import com.google.code.kaptcha.Producer;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
@@ -21,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletRequest;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.util.Base64;
@@ -52,7 +55,7 @@ public class AuthController {
      * @return
      */
     @PostMapping("login")
-    public Response login(@Validated @RequestBody LoginVO loginVO) {
+    public Response login(@Validated @RequestBody LoginVO loginVO, HttpServletRequest request) {
         log.info("User[{}] is logging in", loginVO.getUserName());
         try {
             // 验证登录验证码
@@ -64,12 +67,15 @@ public class AuthController {
                 return ResponseCode.VERIFYCODE_ERROR.build();
             }
 
-            String jwtToken = authService.login(loginVO.getUserName(),loginVO.getPassword());
+            String loginIp = IpUtil.getRealIp(request);
+
+            String jwtToken = authService.login(loginVO.getUserName(), loginVO.getPassword(), loginIp);
             TokenValue tokenValue = new TokenValue();
             tokenValue.setHeader(jwtTokenUtils.getTokenHeader());
             tokenValue.setValue(jwtToken);
             tokenValue.setPrefix(jwtTokenUtils.getTokenHead());
             tokenValue.setExpiration(jwtTokenUtils.getExpiration());
+
             log.info("用户登录处理完成");
             return ResponseCode.SUCCESS.build(tokenValue);
         } catch (AuthenticationException ex) {
@@ -99,6 +105,17 @@ public class AuthController {
         return ResponseCode.SUCCESS.build(authVO);
     }
 
+    /**
+     * 修改密码
+     * @param changePwdVO
+     * @return
+     */
+    @PostMapping("changePwd")
+    public Response changePwd(@Validated @RequestBody ChangePwdVO changePwdVO) {
+        log.info("user change password!");
+        return authService.changePassword(changePwdVO);
+    }
+
     @Resource
     private Producer captchaProducer;
 
@@ -122,5 +139,6 @@ public class AuthController {
 
         return ResponseCode.SUCCESS.build(captchaVO);
     }
+
 
 }

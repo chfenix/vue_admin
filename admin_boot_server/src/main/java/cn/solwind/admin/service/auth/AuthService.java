@@ -1,6 +1,8 @@
 package cn.solwind.admin.service.auth;
 
 import cn.solwind.admin.common.Constants;
+import cn.solwind.admin.common.Response;
+import cn.solwind.admin.common.ResponseCode;
 import cn.solwind.admin.entity.SysFunction;
 import cn.solwind.admin.entity.SysUser;
 import cn.solwind.admin.jwt.JwtTokenUtils;
@@ -10,6 +12,7 @@ import cn.solwind.admin.mapper.SysRoleMapper;
 import cn.solwind.admin.mapper.SysUserMapper;
 import cn.solwind.admin.pojo.auth.AuthVO;
 import cn.solwind.admin.pojo.auth.ButtonVO;
+import cn.solwind.admin.pojo.auth.ChangePwdVO;
 import cn.solwind.admin.pojo.auth.MenuVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -17,12 +20,14 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -56,19 +61,25 @@ public class AuthService {
      * 用户登录
      * @param username
      * @param password
+     * @param ip
      * @return
      */
-    public String login(String username, String password) {
+    public String login(String username, String password, String ip) {
         UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(username, password);
         Authentication authentication = authenticationManager.authenticate(upToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+        JwtUser userDetails = (JwtUser) userDetailsService.loadUserByUsername(username);
+        // 更新用户登录信息
+        SysUser sysUser = sysUserMapper.selectByPrimaryKey(userDetails.getId());
+        sysUser.setLastLoginIp(ip);
+        sysUser.setLastLoginTime(new Date());
+        sysUserMapper.updateByPrimaryKey(sysUser);
+
         return jwtTokenUtil.generateToken(userDetails);
     }
 
     /**
      * 根据ID获取用户信息
-     * @param userId
      * @return
      */
     public AuthVO findUserInfo() {
@@ -131,5 +142,46 @@ public class AuthService {
         authVO.setRoles(arrRoles);
 
         return authVO;
+    }
+
+    /**
+     * 修改密码
+     *
+     * @param changePwdVO
+     * @return
+     */
+    public Response changePassword(ChangePwdVO changePwdVO) {
+        // 查询用户
+        JwtUser userDetails = (JwtUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Long userId = userDetails.getId();
+        SysUser sysUser = sysUserMapper.selectByPrimaryKey(userId);
+
+        if(sysUser == null) {
+            // 未找到用户
+            log.error("未找到当前用户!Id{}", userId);
+            return ResponseCode.PASSWORD_ERROR.build();
+        }
+
+        // 验证原密码
+        PasswordEncoder encoder = new BCryptPasswordEncoder();
+        if(!encoder.matches(changePwdVO.getOldPassword(),sysUser.getPassword())) {
+            // 密码验证失败
+            log.info("用户原密码错误! Id{}", userId);
+            return ResponseCode.PASSWORD_ERROR.build();
+        }
+
+        // 验证新密码两次输入是否一致
+        if(!changePwdVO.getNewPassword().equals(changePwdVO.getRepeatNewPassword())) {
+            // 两次输入密码不一致
+            log.info("两次输入密码不一致! Id{}", userId);
+            return ResponseCode.REPEAT_PASSWORD_ERROR.build();
+        }
+
+        // 更新新密码
+        sysUser.setPassword(encoder.encode(changePwdVO.getNewPassword()));
+        sysUser.setUpdateTime(new Date());
+        sysUserMapper.updateByPrimaryKey(sysUser);
+
+        return ResponseCode.SUCCESS.build();
     }
 }
