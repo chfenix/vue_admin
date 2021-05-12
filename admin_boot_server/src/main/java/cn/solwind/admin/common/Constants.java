@@ -8,8 +8,6 @@ public class Constants {
     public static final int GlobalSessionTimeout = 1000 * 60 * 30;
     public static final int SessionValidationInterval = 1000 * 60 * 30;
 
-    public static final String TOKEN_NAME = "_SW_TOKEN";
-
     /**
      * 通用有效，无效
      */

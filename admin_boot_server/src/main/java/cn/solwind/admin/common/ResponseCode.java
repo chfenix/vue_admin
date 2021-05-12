@@ -17,7 +17,7 @@ public enum ResponseCode {
      * 用户登录相关
      */
     LOGIN_FAIL(1001, "无效用户名，密码"),
-    AUTH_FAIL(1002, "登录验证失败"),
+    VERIFYCODE_ERROR(1002, "验证码错误，请重新输入"),
     OTHER_LOGIN(1003, "已经在其他客户端登录，请重新登录"),
     PASSWORD_ERROR(1004, "旧密码错误"),
     REPEAT_PASSWORD_ERROR(1005, "新密码和重复新密码不一致"),

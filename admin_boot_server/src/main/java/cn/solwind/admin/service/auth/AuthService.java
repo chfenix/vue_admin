@@ -11,7 +11,6 @@ import cn.solwind.admin.mapper.SysUserMapper;
 import cn.solwind.admin.pojo.auth.AuthVO;
 import cn.solwind.admin.pojo.auth.ButtonVO;
 import cn.solwind.admin.pojo.auth.MenuVO;
-import javafx.scene.control.Menu;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.authentication.AuthenticationManager;

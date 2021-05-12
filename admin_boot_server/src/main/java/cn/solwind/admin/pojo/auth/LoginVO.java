@@ -29,4 +29,9 @@ public class LoginVO {
      */
     @NotNull(message = "请输入验证码!")
     private String verifyCode;
+
+    /**
+     * 验证码KEY
+     */
+    private String verifyKey;
 }

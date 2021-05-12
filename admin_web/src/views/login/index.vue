@@ -60,7 +60,7 @@
         </el-col>
         <el-col :span="8">
           <el-tooltip content="[ 点击 ] 刷新验证码" placement="right" effect="light">
-            <el-image :src="codeUrl" style="cursor:pointer;border-radius: 5px;" fit="fit" @click="changeImageCode">
+            <el-image :src="verifyImgUrl" style="cursor:pointer;border-radius: 5px;" fit="fit" @click="showVerifyCode()">
               <div slot="error" class="image-slot">
                 <i class="el-icon-picture-outline" />
               </div>
@@ -76,7 +76,7 @@
 </template>
 
 <script>
-// import { validUsername } from '@/utils/validate'
+import { getCaptcha } from '@/api/auth'
 
 export default {
   name: 'Login',
@@ -106,7 +106,8 @@ export default {
       loginForm: {
         userName: 'admin',
         password: 'abcd@1234',
-        verifyCode: '1111'
+        verifyCode: '1111',
+        verifyKey: ''
       },
       loginRules: {
         userName: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -114,6 +115,7 @@ export default {
         verifyCode: [{ required: true, trigger: 'blur', validator: validateCode }]
       },
       loading: false,
+      verifyImgUrl: '',
       passwordType: 'password',
       redirect: undefined
     }
@@ -125,6 +127,9 @@ export default {
       },
       immediate: true
     }
+  },
+  created() {
+    this.showVerifyCode()
   },
   methods: {
     showPwd() {
@@ -146,11 +151,19 @@ export default {
             this.loading = false
           }).catch(() => {
             this.loading = false
+            this.showVerifyCode()
           })
         } else {
-          console.log('error submit!!')
+          console.log('系统繁忙，请稍候再试!')
+          this.showVerifyCode()
           return false
         }
+      })
+    },
+    showVerifyCode() {
+      getCaptcha().then(res => {
+        this.verifyImgUrl = 'data:image/gif;base64,' + res.data.base64Image
+        this.loginForm.verifyKey = res.data.randomKey
       })
     }
   }
