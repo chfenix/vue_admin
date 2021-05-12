@@ -17,9 +17,10 @@ function getRtoueByMenu(menu, routes) {
 }
 
 /**
- * Filter asynchronous routing tables by recursion
- * @param routes asyncRoutes
- * @param menus
+ * 根据后台menu配置生成route菜单
+ * @param {Array} routes 本地route配置
+ * @param {Array} menus 后台menus配置
+ * @returns {Array}
  */
 export function filterAsyncRoutes(routes, menus) {
   const res = []
