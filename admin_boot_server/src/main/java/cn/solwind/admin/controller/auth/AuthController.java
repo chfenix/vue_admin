@@ -133,7 +133,7 @@ public class AuthController {
      */
     @GetMapping("/captcha")
     @Operation(summary = "图片验证码", description = "返回图片验证码以及随机key")
-    public Response getKaptchaImage() throws Exception {
+    public Response<CaptchaVO> getKaptchaImage() throws Exception {
         String capText = captchaProducer.createText();
         log.debug("captcha: " + capText );
         BufferedImage bi = captchaProducer.createImage(capText);
