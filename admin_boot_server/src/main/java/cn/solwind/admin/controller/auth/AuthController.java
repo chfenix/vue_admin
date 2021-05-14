@@ -12,6 +12,8 @@ import cn.solwind.admin.pojo.auth.LoginVO;
 import cn.solwind.admin.service.auth.AuthService;
 import cn.solwind.admin.utils.IpUtil;
 import com.google.code.kaptcha.Producer;
+import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -34,6 +36,7 @@ import java.util.Base64;
 @RestController
 @RequestMapping("/api/auth")
 @Slf4j
+@Api(tags="用户鉴权", value="用户登录")
 public class AuthController {
 
     @Value("${project.login.verifycode}")
@@ -54,8 +57,9 @@ public class AuthController {
      * @param loginVO
      * @return
      */
+    @Operation(summary = "用户登录", description = "用户登录接口")
     @PostMapping("login")
-    public Response login(@Validated @RequestBody LoginVO loginVO, HttpServletRequest request) {
+    public Response<TokenValue> login(@Validated @RequestBody LoginVO loginVO, HttpServletRequest request) {
         log.info("User[{}] is logging in", loginVO.getUserName());
         try {
             // 验证登录验证码
@@ -89,6 +93,7 @@ public class AuthController {
      * 登出
      * @return
      */
+    @Operation(summary = "登出", description = "用户登出接口")
     @PostMapping("logout")
     public Response logout() {
         // TODO 如用户信息保存至缓存中，在此处进行清除
@@ -100,7 +105,8 @@ public class AuthController {
      * @return
      */
     @GetMapping("info")
-    public Response info() {
+    @Operation(summary = "获取用户信息", description = "获取用户基本信息以及权限菜单等")
+    public Response<AuthVO> info() {
         AuthVO authVO = authService.findUserInfo();
         return ResponseCode.SUCCESS.build(authVO);
     }
@@ -111,6 +117,7 @@ public class AuthController {
      * @return
      */
     @PostMapping("changePwd")
+    @Operation(summary = "修改密码", description = "用户修改密码")
     public Response changePwd(@Validated @RequestBody ChangePwdVO changePwdVO) {
         log.info("user change password!");
         return authService.changePassword(changePwdVO);
@@ -125,6 +132,7 @@ public class AuthController {
      * @throws Exception
      */
     @GetMapping("/captcha")
+    @Operation(summary = "图片验证码", description = "返回图片验证码以及随机key")
     public Response getKaptchaImage() throws Exception {
         String capText = captchaProducer.createText();
         log.debug("captcha: " + capText );
@@ -139,6 +147,4 @@ public class AuthController {
 
         return ResponseCode.SUCCESS.build(captchaVO);
     }
-
-
 }

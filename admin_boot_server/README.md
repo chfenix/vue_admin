@@ -12,5 +12,8 @@ cn.solwind.common
 新表可以通过修改/resources/mybatis-generator.xml中数据库配置，然后使用Maven插件exec:java反向生成entity和Mapper<br>
 _注意：需要依赖cn.solwind.dbgenerator，已解决java文件合并问题，增加Lombok和TK.Mapper支持_
 
+## Swagger访问地址
+http://127.0.0.1:{port}/swagger-ui/index.html
+
 ## 需注意的问题
 

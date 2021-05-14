@@ -1,6 +1,7 @@
 package cn.solwind.admin.pojo.auth;
 
-import cn.solwind.admin.entity.SysFunction;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,15 +12,21 @@ import java.util.List;
  */
 @Getter
 @Setter
+@ApiModel("登录用户信息")
 public class AuthVO {
 
+    @ApiModelProperty(value="姓名")
     private String name;    // 姓名
 
+    @ApiModelProperty(value="头像")
     private String avatar;  // 头像
 
+    @ApiModelProperty(value="角色数组")
     private String[] roles; // 角色
 
+    @ApiModelProperty(value="菜单List")
     private List<MenuVO> menus;
 
+    @ApiModelProperty(value="按钮List")
     private List<ButtonVO> buttons;
 }
