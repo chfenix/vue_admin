@@ -78,7 +78,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated();
         httpSecurity.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
         httpSecurity.headers().cacheControl();
-        httpSecurity.authorizeRequests().accessDecisionManager(accessDecisionManager());
+//        httpSecurity.authorizeRequests().accessDecisionManager(accessDecisionManager());
 //        httpSecurity.authorizeRequests()
 //                // 自定义FilterInvocationSecurityMetadataSource
 //                .withObjectPostProcessor(new ObjectPostProcessor<FilterSecurityInterceptor>() {

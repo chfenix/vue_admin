@@ -22,9 +22,15 @@ public enum ResponseCode {
     PASSWORD_ERROR(1004, "旧密码错误"),
     REPEAT_PASSWORD_ERROR(1005, "新密码和重复新密码不一致"),
     /**
-     * 用户管理
+     * ######################
+     * 系统管理
+     * ######################
      */
+    SYSBOOK_CANNOT_MODIFY(2001,"此数据字典不允许修改"),
+    SYSBOOK_DUPLICATE(2002,"TypeCode和ListCode组合不能重复"),
+
     ;
+
 
     ResponseCode(Integer code, String msg) {
         this.code = code;

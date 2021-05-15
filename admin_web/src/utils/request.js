@@ -12,7 +12,7 @@ const service = axios.create({
 })
 
 if (process.env.NODE_ENV === 'development') {
-  service.defaults.baseURL = 'http://localhost:8081/'
+  service.defaults.baseURL = 'http://192.168.8.5:8081/'
   service.defaults.withCredentials = true
 }
 

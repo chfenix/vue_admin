@@ -51,7 +51,7 @@ export const constantRoutes = [
       path: 'dashboard',
       name: 'Dashboard',
       component: () => import('@/views/dashboard/index'),
-      meta: { title: 'Dashboard', icon: 'dashboard' }
+      meta: { title: '首页', icon: 'dashboard' }
     }]
   },
   {
@@ -72,35 +72,25 @@ export const constantRoutes = [
 export const asyncRoutes = [
 
   {
-    path: '/order',
-    name: '一级菜单',
+    path: '/sys',
+    name: 'SystemManage',
     component: Layout,
-    redirect: '/order/index',
+    // redirect: '/order/index',
     alwaysShow: true,
     meta: {
       code: 'sys',
-      title: '一级菜单',
-      icon: 'list'
+      title: '系统管理',
+      icon: 'link'
     },
     children: [
       {
-        path: 'index',
-        name: 'order1',
-        component: () => import('@/views/order/index'),
+        path: 'sysbook',
+        name: 'Sysbook',
+        component: () => import('@/views/sys/sysbook'),
         meta: {
-          code: 'order1',
-          title: '二级菜单',
-          icon: 'user'
-        }
-      },
-      {
-        path: 'user',
-        name: 'PreUser',
-        component: () => import('@/views/customer/index'),
-        meta: {
-          code: 'order2',
-          title: '用户管理',
-          icon: 'lock'
+          code: 'sysbook',
+          title: '数据字典',
+          icon: 'link'
         }
       }
     ]

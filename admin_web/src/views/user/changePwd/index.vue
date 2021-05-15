@@ -1,17 +1,17 @@
 <template>
   <div class="app-container">
     <el-form ref="passwordForm" :model="form" :rules="submitRules" label-width="140px">
-      <el-form-item label="Old Password" prop="oldPassword">
-        <el-input v-model="form.oldPassword" type="password" placeholder="Please enter the old password" />
+      <el-form-item label="旧密码" prop="oldPassword">
+        <el-input v-model="form.oldPassword" type="password" placeholder="输入旧密码" />
       </el-form-item>
-      <el-form-item label="New Password" prop="newPassword">
-        <el-input v-model="form.newPassword" type="password" placeholder="Please enter the new password" />
+      <el-form-item label="新密码" prop="newPassword">
+        <el-input v-model="form.newPassword" type="password" placeholder="输入新密码" />
       </el-form-item>
-      <el-form-item label="New Password" prop="repeatNewPassword">
-        <el-input v-model="form.repeatNewPassword" type="password" placeholder="Please enter the new password again" />
+      <el-form-item label="再次输入新密码" prop="repeatNewPassword">
+        <el-input v-model="form.repeatNewPassword" type="password" placeholder="再次输入新密码" />
       </el-form-item>
       <el-form-item>
-        <el-button :loading="loading" type="primary" @click="onSubmit">Save</el-button>
+        <el-button :loading="loading" type="primary" @click="onSubmit">修 改</el-button>
       </el-form-item>
     </el-form>
   </div>
@@ -26,9 +26,9 @@ export default {
     // 检查输入内容
     const validatePassword = (rule, value, callback) => {
       if (value.length === 0) {
-        callback(new Error('Please input the password!'))
+        callback(new Error('密码不能为空!'))
       } else if (!validPassword(value)) {
-        callback(new Error('Password must be number and letter!'))
+        callback(new Error('密码必须包含字母、数字和特殊字符!'))
       } else {
         callback()
       }
@@ -36,7 +36,7 @@ export default {
     // 校验新密码是否一致
     const validateRepeatPassword = (rule, value, callback) => {
       if (this.form.newPassword !== this.form.repeatNewPassword) {
-        callback(new Error('Two New password must be the same!'))
+        callback(new Error('两次输入的新密码不一致!'))
       } else {
         callback()
       }
@@ -63,7 +63,7 @@ export default {
           changePwd(this.form).then(() => {
             console.log('success!')
             this.loading = false
-            this.$message.success('New password saved success!')
+            this.$message.success('密码修改成功，请使用新密码登录!')
             Object.keys(this.form).forEach(key => (this.form[key] = ''))
           }).catch(() => {
             console.log('failed!')
