@@ -6,7 +6,7 @@
         查询
       </el-button>
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
-        增加
+        新增
       </el-button>
     </div>
     <el-form ref="tableForm" :model="tableForm" :rules="tableFormRules">
@@ -73,8 +73,24 @@
         <el-table-column label="操作" width="160" align="center" type="index">
           <template slot-scope="scope">
             <template v-if="scope.row.edit">
-              <el-button type="success" :loading="btnLoading" size="mini" icon="el-icon-check" @click="scope.row.id == null?confirmCreate(scope.row,scope.$index):confirmEdit(scope.$index,scope.row)" />
-              <el-button type="warning" :loading="btnLoading" size="mini" icon="el-icon-close" @click="scope.row.id == null?cancelCreate(scope.$index):cancelEdit(scope.$index, scope.row)" />
+              <el-tooltip class="item" effect="dark" :content="scope.row.id == null?'新增':'修改'" placement="top" :open-delay="200">
+                <el-button
+                  type="success"
+                  :loading="btnLoading"
+                  size="mini"
+                  icon="el-icon-check"
+                  @click="scope.row.id == null?confirmCreate(scope.row,scope.$index):confirmEdit(scope.$index,scope.row)"
+                />
+              </el-tooltip>
+              <el-tooltip class="item" effect="dark" content="取消" placement="top" :open-delay="200">
+                <el-button
+                  type="warning"
+                  :loading="btnLoading"
+                  size="mini"
+                  icon="el-icon-close"
+                  @click="scope.row.id == null?cancelCreate(scope.$index):cancelEdit(scope.$index, scope.row)"
+                />
+              </el-tooltip>
             </template>
             <template v-else>
               <el-button
@@ -85,12 +101,14 @@
               >
                 修改
               </el-button>
-              <el-button
-                type="danger"
-                size="mini"
-                icon="el-icon-delete"
-                @click="handleDelete(scope.$index, scope.row.id)"
-              />
+              <el-tooltip class="item" effect="dark" content="删除" placement="top" :open-delay="200">
+                <el-button
+                  type="danger"
+                  size="mini"
+                  icon="el-icon-delete"
+                  @click="handleDelete(scope.$index, scope.row.id)"
+                />
+              </el-tooltip>
             </template>
           </template>
         </el-table-column>
