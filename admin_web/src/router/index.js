@@ -92,6 +92,16 @@ export const asyncRoutes = [
           title: '数据字典',
           icon: 'link'
         }
+      },
+      {
+        path: 'sysrole',
+        name: 'SysRole',
+        component: () => import('@/views/sys/role'),
+        meta: {
+          code: 'sysrole',
+          title: '角色管理',
+          icon: 'link'
+        }
       }
     ]
   },

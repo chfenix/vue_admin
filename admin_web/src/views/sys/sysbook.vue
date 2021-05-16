@@ -17,69 +17,69 @@
         border
         fit
         stripe
+        style="width: 100%;"
         class="order-table"
-        :header-cell-style="{background:'Gainsboro',color:'#000'}"
       >
-        <el-table-column label="Type Code">
-          <template slot-scope="scope">
-            <template v-if="scope.row.edit">
-              <el-form-item :prop="'tableData.' + scope.$index + '.typeCode'" :rules="tableFormRules.typeCode">
-                <el-input v-model="scope.row.typeCode" class="edit-input" size="small" />
+        <el-table-column label="Type Code" header-align="center">
+          <template slot-scope="{row,$index}">
+            <template v-if="row.edit">
+              <el-form-item :prop="'tableData.' + $index + '.typeCode'" :rules="tableFormRules.typeCode">
+                <el-input v-model="row.typeCode" class="edit-input" size="small" />
               </el-form-item>
             </template>
-            <span v-else>{{ scope.row.typeCode }}</span>
+            <span v-else>{{ row.typeCode }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="Type Name">
-          <template slot-scope="scope">
-            <template v-if="scope.row.edit">
-              <el-form-item :prop="'tableData.' + scope.$index + '.typeName'" :rules="tableFormRules.typeName">
-                <el-input v-model="scope.row.typeName" class="edit-input" size="small" />
+        <el-table-column label="Type Name" header-align="center">
+          <template slot-scope="{row,$index}">
+            <template v-if="row.edit">
+              <el-form-item :prop="'tableData.' + $index + '.typeName'" :rules="tableFormRules.typeName">
+                <el-input v-model="row.typeName" class="edit-input" size="small" />
               </el-form-item>
             </template>
-            <span v-else>{{ scope.row.typeName }}</span>
+            <span v-else>{{ row.typeName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="List Code">
-          <template slot-scope="scope">
-            <template v-if="scope.row.edit">
-              <el-form-item :prop="'tableData.' + scope.$index + '.listCode'" :rules="tableFormRules.listCode">
-                <el-input v-model="scope.row.listCode" class="edit-input" size="small" />
+        <el-table-column label="List Code" header-align="center">
+          <template slot-scope="{row,$index}">
+            <template v-if="row.edit">
+              <el-form-item :prop="'tableData.' + $index + '.listCode'" :rules="tableFormRules.listCode">
+                <el-input v-model="row.listCode" class="edit-input" size="small" />
               </el-form-item>
             </template>
-            <span v-else>{{ scope.row.listCode }}</span>
+            <span v-else>{{ row.listCode }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="List Name">
-          <template slot-scope="scope">
-            <template v-if="scope.row.edit">
-              <el-form-item :prop="'tableData.' + scope.$index + '.listName'" :rules="tableFormRules.listName">
-                <el-input v-model="scope.row.listName" class="edit-input" size="small" />
+        <el-table-column label="List Name" header-align="center">
+          <template slot-scope="{row,$index}">
+            <template v-if="row.edit">
+              <el-form-item :prop="'tableData.' + $index + '.listName'" :rules="tableFormRules.listName">
+                <el-input v-model="row.listName" class="edit-input" size="small" />
               </el-form-item>
             </template>
-            <span v-else>{{ scope.row.listName }}</span>
+            <span v-else>{{ row.listName }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="显示顺序">
-          <template slot-scope="scope">
-            <template v-if="scope.row.edit">
-              <el-form-item :prop="'tableData.' + scope.$index + '.pri'" :rules="tableFormRules.pri">
-                <el-input v-model="scope.row.pri" class="edit-input" size="small" />
+        <el-table-column label="显示顺序" header-align="center">
+          <template slot-scope="{row,$index}">
+            <template v-if="row.edit">
+              <el-form-item :prop="'tableData.' + $index + '.pri'" :rules="tableFormRules.pri">
+                <el-input v-model="row.pri" class="edit-input" size="small" />
               </el-form-item>
             </template>
-            <span v-else>{{ scope.row.pri }}</span>
+            <span v-else>{{ row.pri }}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="160" align="center" type="index">
-          <template slot-scope="scope">
-            <template v-if="scope.row.edit">
-              <el-tooltip class="item" effect="dark" :content="scope.row.id == null?'新增':'修改'" placement="top" :open-delay="200">
+          <template slot-scope="{row,$index}">
+            <template v-if="row.edit">
+              <el-tooltip class="item" effect="dark" :content="row.id == null?'新增':'修改'" placement="top" :open-delay="200">
                 <el-button
                   type="success"
                   :loading="btnLoading"
                   size="mini"
                   icon="el-icon-check"
-                  @click="scope.row.id == null?confirmCreate(scope.row,scope.$index):confirmEdit(scope.$index,scope.row)"
+                  @click="row.id == null?confirmCreate(row,$index):confirmModify($index,row)"
                 />
               </el-tooltip>
               <el-tooltip class="item" effect="dark" content="取消" placement="top" :open-delay="200">
@@ -88,7 +88,7 @@
                   :loading="btnLoading"
                   size="mini"
                   icon="el-icon-close"
-                  @click="scope.row.id == null?cancelCreate(scope.$index):cancelEdit(scope.$index, scope.row)"
+                  @click="row.id == null?cancelCreate($index):cancelModify($index, row)"
                 />
               </el-tooltip>
             </template>
@@ -97,16 +97,16 @@
                 type="primary"
                 size="mini"
                 icon="el-icon-edit"
-                @click="handleModify(scope.row)"
+                @click="handleModify(row)"
               >
                 修改
               </el-button>
-              <el-tooltip class="item" effect="dark" content="删除" placement="top" :open-delay="200">
+              <el-tooltip class="item" effect="dark" content="删除" placement="top" :open-delay="500" :hide-after="1000">
                 <el-button
                   type="danger"
                   size="mini"
                   icon="el-icon-delete"
-                  @click="handleDelete(scope.$index, scope.row.id)"
+                  @click="handleDelete($index, row.id)"
                 />
               </el-tooltip>
             </template>
@@ -115,38 +115,6 @@
       </el-table>
     </el-form>
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="fetchData" />
-
-    <el-dialog :visible.sync="dialogVisible" :title="'数据字典'">
-      <el-form :model="sysbook" label-width="80px" label-position="left">
-        <el-form-item label="类型编号">
-          <el-input v-model="sysbook.typeCode" placeholder="请输入类型编号" />
-        </el-form-item>
-      </el-form>
-      <el-form :model="sysbook" label-width="80px" label-position="left">
-        <el-form-item label="类型名称">
-          <el-input v-model="sysbook.typeName" placeholder="请输入类型名称" />
-        </el-form-item>
-      </el-form>
-      <el-form :model="sysbook" label-width="80px" label-position="left">
-        <el-form-item label="明细编号">
-          <el-input v-model="sysbook.listCode" placeholder="请输入明细编号" />
-        </el-form-item>
-      </el-form>
-      <el-form :model="sysbook" label-width="80px" label-position="left">
-        <el-form-item label="明细名称">
-          <el-input v-model="sysbook.listName" placeholder="请输入明细名称" />
-        </el-form-item>
-      </el-form>
-      <el-form :model="sysbook" label-width="80px" label-position="left">
-        <el-form-item label="显示顺序">
-          <el-input v-model="sysbook.pri" placeholder="请输入显示顺序" />
-        </el-form-item>
-      </el-form>
-      <div style="text-align:right;">
-        <el-button type="danger" @click="dialogVisible=false">取消</el-button>
-        <el-button type="primary">保存</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 
@@ -184,7 +152,7 @@ export default {
         pri: [{ required: true, message: '显示顺序不能为空', trigger: 'blur' }]
       },
       list: null,
-      tmp: null,
+      temp: null,
       total: 0,
       btnLoading: false,
       listLoading: true,
@@ -238,13 +206,11 @@ export default {
           row.edit = false
           row.id = response.data.id
           this.btnLoading = false
-          this.$notify({
-            title: '操作成功',
+          this.$message({
             message: '新增成功',
-            type: 'success',
-            duration: 2000
+            type: 'success'
           })
-          this.tmp = null
+          this.temp = null
         }).catch(() => {
           console.log('failed!')
           this.btnLoading = false
@@ -256,46 +222,42 @@ export default {
     },
     handleModify(row) {
       row.edit = true
-      this.tmp = Object.assign({}, row) // 保存修改前数据
+      this.temp = Object.assign({}, row) // 保存修改前数据
     },
-    confirmEdit(index, row) {
+    confirmModify(index, row) {
       if (this.validateSubmit(index)) {
         this.btnLoading = true
         const tempData = Object.assign({}, row)
         updateSysbook(tempData).then(() => {
           row.edit = false
           this.btnLoading = false
-          this.$notify({
-            title: '操作成功',
+          this.$message({
             message: '修改成功',
-            type: 'success',
-            duration: 2000
+            type: 'success'
           })
-          this.tmp = null
+          this.temp = null
         }).catch(() => {
           console.log('failed!')
           this.btnLoading = false
         })
       }
     },
-    cancelEdit(index, row) {
-      this.tmp.edit = false
-      this.tableForm.tableData.splice(index, 1, this.tmp)
-      this.tmp = null
+    cancelModify(index, row) {
+      this.temp.edit = false
+      this.tableForm.tableData.splice(index, 1, this.temp)
+      this.temp = null
     },
     handleDelete(index, id) {
-      this.$confirm('是否删除数据字典?', '注意', {
+      this.$confirm('此操作会永久删除此数据，是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(async() => {
         await deleteSysbook(id)
         this.tableForm.tableData.splice(index, 1)
-        this.$notify({
-          title: '操作成功',
+        this.$message({
           message: '删除成功',
-          type: 'success',
-          duration: 2000
+          type: 'success'
         })
       })
         .catch(err => { console.error(err) })
@@ -305,9 +267,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.app-container {
-  padding: 2% 5% 1px;
-}
 .create-button {
   padding-bottom: 20px;
 }
