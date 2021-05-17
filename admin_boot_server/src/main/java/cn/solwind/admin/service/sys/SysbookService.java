@@ -44,7 +44,7 @@ public class SysbookService {
         BeanOperateUtil.emptyStrToNull(sysbookQuery);
 
         // 查询全部有效的sysbook
-        List<SysbookVO> listSysbook = sysbookMapper.selectAllToVO(sysbookQuery);
+        List<SysbookVO> listSysbook = sysbookMapper.selectByQuery(sysbookQuery);
         PageInfo<SysbookVO> pageData = new PageInfo<>(listSysbook);
 
         return pageData;
@@ -90,6 +90,7 @@ public class SysbookService {
      * @param sysbookVO
      * @return
      */
+    @Transactional
     public Response updateSysbook(SysbookVO sysbookVO) {
         JwtUser userDetails = (JwtUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         Sysbook sysbook = sysbookMapper.selectByPrimaryKey(sysbookVO.getId());
@@ -118,6 +119,7 @@ public class SysbookService {
      * @param id
      * @return
      */
+    @Transactional
     public Response deleteSysbook(Long id) {
         if(id != null) {
             sysbookMapper.deleteByPrimaryKey(id);

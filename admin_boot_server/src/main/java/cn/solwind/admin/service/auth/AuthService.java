@@ -95,7 +95,7 @@ public class AuthService {
         authVO.setAvatar(sysUser.getAvatar());
 
         // 查询用户权限
-        List<SysFunction> listFunc = sysFunctionMapper.findAllFuncByUserId(userId);
+        List<SysFunction> listFunc = sysFunctionMapper.selectAllFuncByUserId(userId);
         // 封装用户权限
         List<ButtonVO> listButtons = new ArrayList<>();
         List<MenuVO> listTmpMenus = new ArrayList<>();
@@ -138,7 +138,7 @@ public class AuthService {
         authVO.setButtons(listButtons);
 
         // 获取用户所有角色
-        String[] arrRoles = sysRoleMapper.findAllRoleCodeByUserId(userId);
+        String[] arrRoles = sysRoleMapper.selectAllRoleCodeByUserId(userId);
         authVO.setRoles(arrRoles);
 
         return authVO;

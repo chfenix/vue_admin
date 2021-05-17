@@ -27,7 +27,7 @@ public class FunctionService {
      * @return
      */
     public List<SysFunction> findAllByUserId(Long userId) {
-        return sysFunctionMapper.findAllFuncByUserId(userId);
+        return sysFunctionMapper.selectAllFuncByUserId(userId);
     }
 
     /**
@@ -39,6 +39,7 @@ public class FunctionService {
         Example example = new Example(SysFunction.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andEqualTo("status", Constants.COMMON_VALID);
+        criteria.andEqualTo("type", Constants.FUNC_TYPE_MENU);
         example.orderBy("parentId").orderBy("sort");
         List<SysFunction> listFunc = sysFunctionMapper.selectByExample(example);
 
@@ -80,7 +81,7 @@ public class FunctionService {
      */
     public List<MenuTreeVO> findRoleMenus(Long id) {
         // 获取用户所具有的权限
-        List<SysFunction> listFunction = sysFunctionMapper.findAllLeafMenuByRole(id);
+        List<SysFunction> listFunction = sysFunctionMapper.selectAllLeafMenuByRole(id);
         // 结果转为List，用于设置是否选中
         List<MenuTreeVO> listMenus = new ArrayList<>();
         listFunction.forEach((sysFunction -> {

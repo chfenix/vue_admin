@@ -46,9 +46,17 @@ public class RoleService {
     public PageInfo<RoleVO> listRole(PageParameter pageParameter) {
         PageHelper.startPage(pageParameter.getPageNum(), pageParameter.getPageSize());    // 分页查询
         // 查询全部有效的角色
-        List<RoleVO> listRole = sysRoleMapper.selectAllToVO();
+        List<RoleVO> listRole = sysRoleMapper.selectAllRole();
         PageInfo<RoleVO> pageData = new PageInfo<>(listRole);
         return pageData;
+    }
+
+    /**
+     * 查询全部有效的角色信息
+     * @return
+     */
+    public List<RoleVO> listAllRole() {
+        return sysRoleMapper.selectAllRole();
     }
 
     /**

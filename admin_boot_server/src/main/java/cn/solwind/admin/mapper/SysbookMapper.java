@@ -16,5 +16,5 @@ public interface SysbookMapper extends Mapper<Sysbook> {
             " ORDER BY TYPE_CODE,LIST_CODE",
             "</script>"
     })
-    List<SysbookVO> selectAllToVO(SysbookQuery sysbookQuery);
+    List<SysbookVO> selectByQuery(SysbookQuery sysbookQuery);
 }

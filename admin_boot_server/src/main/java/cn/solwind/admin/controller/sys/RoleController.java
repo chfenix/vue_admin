@@ -25,7 +25,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/sys/role")
 @Slf4j
-@Api(tags = "系统管理", value = "角色管理")
+@Api(tags = "角色管理", value = "角色管理")
 public class RoleController {
 
     @Resource
@@ -112,5 +112,16 @@ public class RoleController {
     public Response invalidRole(@PathVariable @ApiParam(name = "角色ID", required = true) Long id) {
         log.info("Delete Role [{}]!", id);
         return roleService.invalidRole(id);
+    }
+
+    /**
+     * 获取全部角色
+     * @return
+     */
+    @GetMapping("all")
+    @Operation(summary = "获取全部角色", description = "获取全部角色接口")
+    public Response<List<RoleVO>> all() {
+        log.info("select all Role");
+        return ResponseCode.SUCCESS.build(roleService.listAllRole());
     }
 }

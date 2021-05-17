@@ -21,7 +21,7 @@ public interface SysFunctionMapper extends Mapper<SysFunction> {
             "AND SF.STATUS = 1",
             "AND SR.STATUS = 1",
             "AND SUR.USER_ID = #{userId} ORDER BY SF.SORT" })
-    List<SysFunction> findAllFuncByUserId(Long userId);
+    List<SysFunction> selectAllFuncByUserId(Long userId);
 
     /**
      * 查询角色下所有类型为菜单且为叶子节点的权限数据
@@ -34,8 +34,8 @@ public interface SysFunctionMapper extends Mapper<SysFunction> {
             "SF.ID = SRF.FUNC_ID",
             "AND SF.STATUS = 1",
             "AND SF.TYPE = 1",
-            "AND NOT EXISTS(SELECT 1 FROM SYS_FUNCTION SFP WHERE SFP.PARENT_ID=SF.ID)",
+            "AND NOT EXISTS(SELECT 1 FROM SYS_FUNCTION SFP WHERE SFP.PARENT_ID=SF.ID AND SFP.TYPE = 1)",
             "AND SRF.ROLE_ID = #{roleId}" })
-    List<SysFunction> findAllLeafMenuByRole(Long roleId);
+    List<SysFunction> selectAllLeafMenuByRole(Long roleId);
 
 }

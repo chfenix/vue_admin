@@ -20,4 +20,11 @@ public class Constants {
     public static final Integer FUNC_TYPE_MENU = 1;     // 菜单
     public static final Integer FUNC_TYPE_BUTTON = 2;   // 按钮
 
+    /**
+     * 用户状态
+     */
+    public static final Integer USER_STATUS_VALID = 1;  // 有效
+    public static final Integer USER_STATUS_FREEZE = 2;  // 冻结
+    public static final Integer USER_STATUS_INVALID = 0;  // 删除
+
 }

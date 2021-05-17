@@ -29,6 +29,7 @@ public enum ResponseCode {
     SYSBOOK_CANNOT_MODIFY(2001,"此数据字典不允许修改"),
     SYSBOOK_DUPLICATE(2002,"TypeCode和ListCode组合重复"),
     ROLE_DUPLICATE(2001,"角色CODE或角色名称重复"),
+    USER_DUPLICATE(2003,"用户名不能重复")
     ;
 
 

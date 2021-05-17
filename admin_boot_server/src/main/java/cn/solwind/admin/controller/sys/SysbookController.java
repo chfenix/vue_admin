@@ -20,7 +20,7 @@ import javax.annotation.Resource;
 @RestController
 @RequestMapping("/api/sys/sysbook")
 @Slf4j
-@Api(tags="系统管理", value="数据字典维护")
+@Api(tags="数据字典", value="数据字典维护")
 public class SysbookController {
 
     @Resource
@@ -44,7 +44,7 @@ public class SysbookController {
      * @return
      */
     @PostMapping("create")
-    @Operation(summary = "创建数据字典", description = "创建数据字典")
+    @Operation(summary = "新增数据字典", description = "新增数据字典")
     public Response<SysbookVO> create(@RequestBody SysbookVO sysbookVO) {
         log.info("Create Sysbook!");
         return sysbookService.createSysbook(sysbookVO);
