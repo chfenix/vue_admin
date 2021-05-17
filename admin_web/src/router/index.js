@@ -102,6 +102,16 @@ export const asyncRoutes = [
           title: '角色管理',
           icon: 'link'
         }
+      },
+      {
+        path: 'sysuser',
+        name: 'SysUser',
+        component: () => import('@/views/sys/user'),
+        meta: {
+          code: 'sysuser',
+          title: '用户管理',
+          icon: 'link'
+        }
       }
     ]
   },

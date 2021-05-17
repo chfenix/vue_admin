@@ -1,6 +1,12 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
+      <el-input v-model="listQuery.userName" placeholder="用户名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.name" placeholder="姓名" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.email" placeholder="Email" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-button class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
+        查询
+      </el-button>
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         新增
       </el-button>
@@ -15,14 +21,29 @@
       class="order-table"
       style="width: 100%;"
     >
-      <el-table-column label="CODE" header-align="center">
+      <el-table-column label="用户名" header-align="center">
         <template slot-scope="{row}">
-          <span>{{ row.code }}</span>
+          <span>{{ row.userName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="名称" header-align="center">
+      <el-table-column label="姓名" header-align="center">
         <template slot-scope="{row}">
           <span>{{ row.name }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="Email" header-align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.email }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="电话" header-align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.phone }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="状态" header-align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.status }}</span>
         </template>
       </el-table-column>
       <el-table-column label="创建时间" header-align="center">
@@ -58,27 +79,32 @@
     </el-table>
     <pagination v-show="total>0" :total="total" :page.sync="listQuery.pageNum" :limit.sync="listQuery.pageSize" @pagination="fetchData" />
 
-    <el-dialog :visible.sync="dialogVisible" :title="dialogType==='create'?'新增角色':'修改角色'">
+    <el-dialog :visible.sync="dialogVisible" :title="dialogType==='create'?'新增用户':'修改用户'">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="right" label-width="80px">
-        <el-form-item label="CODE" prop="code">
-          <el-input v-model="temp.code" placeholder="请输入角色CODE" />
+        <el-form-item label="用户名" prop="userName">
+          <el-input v-model="temp.userName" placeholder="请输入用户名" />
         </el-form-item>
-        <el-form-item label="名称" prop="name">
-          <el-input v-model="temp.name" placeholder="请输入角色名称" />
+        <el-form-item label="姓名" prop="name">
+          <el-input v-model="temp.name" placeholder="请输入用户姓名" />
+        </el-form-item>
+        <el-form-item label="邮箱" prop="email">
+          <el-input v-model="temp.email" placeholder="请输入用户邮箱地址" />
+        </el-form-item>
+        <el-form-item label="电话" prop="phone">
+          <el-input v-model="temp.phone" placeholder="请输入用户联系电话" />
         </el-form-item>
         <el-form-item label="备注" prop="remark">
-          <el-input v-model="temp.remark" placeholder="请输入备注" />
-        </el-form-item>
-        <el-form-item label="权限">
-          <el-tree
-            ref="tree"
-            :data="menuData"
-            :props="menuProps"
-            :default-checked-keys="temp.checkedMenus"
-            show-checkbox
-            node-key="id"
-            class="permission-tree"
+          <el-input
+            v-model="temp.remark"
+            :autosize="{ minRows: 2, maxRows: 4}"
+            type="textarea"
+            placeholder="请输入备注"
           />
+        </el-form-item>
+        <el-form-item label="角色" prop="roles">
+          <el-checkbox-group v-model="temp.roles">
+            <el-checkbox v-for="role in allRoles" :key="role.id" :label="role.id"> {{ role.name }}</el-checkbox>
+          </el-checkbox-group>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -94,36 +120,38 @@
 </template>
 
 <script>
-import { getRoleList, updateRole, createRole, invalidRole, getMenuTree, getRoleMenus } from '@/api/role'
-import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import { getUserList, updateUser, createUser, invalidUser, getAllRole, getUserRoles } from '@/api/user'
+import Pagination from '@/components/Pagination'
 
 export default {
-  name: 'Role',
+  name: 'UserManager',
   components: { Pagination },
   data() {
     return {
       listQuery: {
         pageNum: 1,
-        pageSize: 10
+        pageSize: 10,
+        userName: '',
+        name: '',
+        email: ''
       },
       rules: {
-        code: [{ required: true, message: '角色CODE不能为空', trigger: 'blur' }],
-        name: [{ required: true, message: '角色名称不能为空', trigger: 'blur' }]
+        userName: [{ required: true, message: '用户名不能为空', trigger: 'blur' }],
+        name: [{ required: true, message: '姓名不能为空', trigger: 'blur' }],
+        email: [{ required: true, message: '邮箱地址不能为空', trigger: 'blur' }, { type: 'email', message: '请输入正确的邮箱地址' }],
+        roles: [{ type: 'array', required: true, message: '请至少选择一个角色', trigger: 'change' }]
       },
       list: null,
       temp: {
         id: undefined,
-        code: '',
+        userName: '',
         name: '',
+        email: '',
+        Phone: '',
         remark: '',
-        checkedMenus: []
+        roles: []
       },
-      menuData: [],
-      menuProps: {
-        id: 'id',
-        label: 'title',
-        children: 'children'
-      },
+      allRoles: [],
       total: 0,
       btnLoading: false,
       listLoading: true,
@@ -133,16 +161,18 @@ export default {
   },
   created() {
     this.fetchData()
-    this.initMenuTree()
+    this.initRoles()
   },
   methods: {
     resetTemp() {
       this.temp = {
         id: undefined,
-        code: '',
+        userName: '',
         name: '',
+        email: '',
+        Phone: '',
         remark: '',
-        checkedMenus: []
+        roles: []
       }
     },
     handleFilter() {
@@ -151,22 +181,21 @@ export default {
     },
     fetchData() {
       this.listLoading = true
-      getRoleList(this.listQuery).then(response => {
+      getUserList(this.listQuery).then(response => {
         this.list = response.data.list
         this.total = response.data.total
         this.listLoading = false
       })
     },
-    initMenuTree() {
-      getMenuTree().then(response => {
-        this.menuData = response.data
+    initRoles() {
+      getAllRole().then(response => {
+        this.allRoles = response.data
       })
     },
     handleCreate() {
       this.resetTemp()
       this.dialogType = 'create'
       this.dialogVisible = true
-      this.$refs.tree.setCheckedKeys([])
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
@@ -176,12 +205,7 @@ export default {
         if (valid) {
           this.btnLoading = true
           const tempData = Object.assign({}, this.temp)
-          // 复制选中id至tempData中
-          this.$refs.tree.getCheckedNodes(false, true)
-            .forEach((node) => {
-              tempData.checkedMenus.push(node.id)
-            })
-          createRole(tempData).then(() => {
+          createUser(tempData).then(() => {
             this.list.unshift(tempData)
             this.dialogVisible = false
             this.btnLoading = false
@@ -194,17 +218,20 @@ export default {
             console.log('failed!')
             this.btnLoading = false
           })
+        } else {
+          console.log(this.temp.roles)
         }
       })
     },
     handleModify(row) {
       this.resetTemp()
       this.temp = Object.assign({}, row) // copy obj
-      getRoleMenus(this.temp.id).then(response => {
-        this.$refs.tree.setCheckedNodes(response.data)
-      })
+      this.temp.roles = []
       this.dialogType = 'modify'
       this.dialogVisible = true
+      getUserRoles(this.temp.id).then(response => {
+        this.temp.roles = response.data
+      })
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
@@ -214,13 +241,7 @@ export default {
         if (valid) {
           this.btnLoading = true
           const tempData = Object.assign({}, this.temp)
-          tempData.checkedMenus = []
-          // 复制选中id至tempData中
-          this.$refs.tree.getCheckedNodes(false, true)
-            .forEach((node) => {
-              tempData.checkedMenus.push(node.id)
-            })
-          updateRole(tempData).then(() => {
+          updateUser(tempData).then(() => {
             this.dialogVisible = false
             this.btnLoading = false
             this.$message({
@@ -237,12 +258,12 @@ export default {
       })
     },
     handleDelete(id, index) {
-      this.$confirm('此操作会删除角色数据，是否继续?', '提示', {
+      this.$confirm('此操作会删除用户数据，是否继续?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(async() => {
-        await invalidRole(id)
+        await invalidUser(id)
         this.$message({
           message: '删除成功',
           type: 'success'
