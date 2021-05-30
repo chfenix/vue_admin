@@ -21,44 +21,51 @@
       class="order-table"
       style="width: 100%;"
     >
-      <el-table-column label="用户名" header-align="center">
+      <el-table-column label="用户名" align="center">
         <template slot-scope="{row}">
           <span>{{ row.userName }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="姓名" header-align="center">
+      <el-table-column label="姓名" align="center">
         <template slot-scope="{row}">
           <span>{{ row.name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Email" header-align="center">
+      <el-table-column label="Email" align="center">
         <template slot-scope="{row}">
           <span>{{ row.email }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="电话" header-align="center">
+      <el-table-column label="状态" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.phone }}</span>
+          <el-tag :type="row.status === 1?'success':'info'">
+            {{ showSysbook('COMMON_VALID', row.status) }}
+          </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="状态" header-align="center">
+      <el-table-column label="角色" header-align="center">
         <template slot-scope="{row}">
-          <span>{{ row.status }}</span>
+          <span v-for="(role, index) in row.hadRoles" :key="index">{{ role.roleName }}&nbsp;</span>
         </template>
       </el-table-column>
-      <el-table-column label="创建时间" header-align="center">
+      <el-table-column label="创建" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.createTime | dateFormat('YYYY-MM-DD HH:mm:ss') }}</span>
+          <el-tooltip class="item" effect="light" :content="row.createTime | dateFormat('YYYY-MM-DD HH:mm:ss')" placement="top" :hide-after="3000">
+            <span>{{ row.createUser }}</span>
+          </el-tooltip>
         </template>
       </el-table-column>
-      <el-table-column label="修改时间" header-align="center">
+      <el-table-column label="修改" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.updateTime | dateFormat('YYYY-MM-DD HH:mm:ss') }}</span>
+          <el-tooltip class="item" effect="light" :content="row.updateTime | dateFormat('YYYY-MM-DD HH:mm:ss')" placement="top" :hide-after="3000">
+            <span>{{ row.updateUser }}</span>
+          </el-tooltip>
         </template>
       </el-table-column>
       <el-table-column label="操作" width="160" align="center" type="index">
         <template slot-scope="{row,$index}">
           <el-button
+            v-if="row.userName != 'admin'"
             type="primary"
             size="mini"
             icon="el-icon-edit"
@@ -68,6 +75,7 @@
           </el-button>
           <el-tooltip class="item" effect="dark" content="删除" placement="top" :open-delay="500" :hide-after="1000">
             <el-button
+              v-if="row.userName != 'admin'"
               type="danger"
               size="mini"
               icon="el-icon-delete"
@@ -120,6 +128,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import { getUserList, updateUser, createUser, invalidUser, getAllRole, getUserRoles } from '@/api/user'
 import Pagination from '@/components/Pagination'
 
@@ -158,6 +167,11 @@ export default {
       dialogVisible: false,
       dialogType: 'create'
     }
+  },
+  computed: {
+    ...mapGetters([
+      'showSysbook'
+    ])
   },
   created() {
     this.fetchData()

@@ -8,6 +8,7 @@ const state = {
   avatar: '',
   introduction: '',
   userinfo: {},
+  sysbook: {},
   roles: [],
   menus: [], // 菜单权限
   buttons: [] // 按钮权限
@@ -29,6 +30,9 @@ const mutations = {
       state.nickname = user.name
       state.userinfo = user
     }
+  },
+  SET_SYSBOOK: (state, sysbook) => {
+    state.sysbook = sysbook
   },
   SET_ROLES: (state, roles) => {
     state.roles = roles
@@ -76,6 +80,12 @@ const actions = {
         commit('SET_ROLES', data.roles)
         commit('SET_MENUS', data.menus)
         commit('SET_BUTTONS', data.buttons)
+
+        // 数据字典转义内容
+        if (data.sysbook) {
+          commit('SET_SYSBOOK', data.sysbook)
+        }
+
         resolve(data)
       }).catch(error => {
         reject(error)

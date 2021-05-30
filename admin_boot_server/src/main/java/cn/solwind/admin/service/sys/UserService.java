@@ -9,6 +9,7 @@ import cn.solwind.admin.jwt.JwtUser;
 import cn.solwind.admin.mapper.SysUserMapper;
 import cn.solwind.admin.mapper.SysUserRoleMapper;
 import cn.solwind.admin.pojo.sys.UserQuery;
+import cn.solwind.admin.pojo.sys.UserRoleVO;
 import cn.solwind.admin.pojo.sys.UserVO;
 import cn.solwind.common.BeanOperateUtil;
 import cn.solwind.common.SqlUtil;
@@ -32,6 +33,8 @@ import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 系统用户Service
@@ -63,6 +66,20 @@ public class UserService {
         // 查询全部有效的用户信息
         List<UserVO> listUser = sysUserMapper.selectByQuery(userQuery);
 
+        // 查询用户角色信息
+        // 获取全部用户ID
+        List<Long> listUserIds = new ArrayList<>();
+        listUser.forEach((userVo) -> {
+            listUserIds.add(userVo.getId());
+        });
+        List<UserRoleVO> listUserRoles = sysUserRoleMapper.selectUserRoles(listUserIds);
+        // 根据用户ID组成MapList，用于给用户赋值
+        Map<Long, List<UserRoleVO>> mapUserRoles = listUserRoles.stream().collect(Collectors.groupingBy(UserRoleVO::getUserId));
+
+        // 将用户角色赋值至返回List中
+        listUser.forEach((user) -> {
+            user.setHadRoles(mapUserRoles.get(user.getId()));
+        });
         PageInfo<UserVO> pageData = new PageInfo<>(listUser);
 
         return pageData;

@@ -7,6 +7,9 @@
 cn.solwind.dbgenerator  
 cn.solwind.common
 
+## Build Setup
+
+
 ## DB
 数据库建表语句在doc/DB中  
 新表可以通过修改/resources/mybatis-generator.xml中数据库配置，然后使用Maven插件exec:java反向生成entity和Mapper  

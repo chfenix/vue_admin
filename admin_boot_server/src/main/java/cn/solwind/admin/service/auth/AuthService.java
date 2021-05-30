@@ -5,16 +5,19 @@ import cn.solwind.admin.common.Response;
 import cn.solwind.admin.common.ResponseCode;
 import cn.solwind.admin.entity.SysFunction;
 import cn.solwind.admin.entity.SysUser;
+import cn.solwind.admin.entity.Sysbook;
 import cn.solwind.admin.jwt.JwtTokenUtils;
 import cn.solwind.admin.jwt.JwtUser;
 import cn.solwind.admin.mapper.SysFunctionMapper;
 import cn.solwind.admin.mapper.SysRoleMapper;
 import cn.solwind.admin.mapper.SysUserMapper;
+import cn.solwind.admin.mapper.SysbookMapper;
 import cn.solwind.admin.pojo.auth.AuthVO;
 import cn.solwind.admin.pojo.auth.ButtonVO;
 import cn.solwind.admin.pojo.auth.ChangePwdVO;
 import cn.solwind.admin.pojo.auth.MenuVO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.map.HashedMap;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,6 +27,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -40,22 +44,25 @@ import java.util.stream.Collectors;
 public class AuthService {
 
     @Resource
-    private AuthenticationManager authenticationManager;
+    AuthenticationManager authenticationManager;
 
     @Resource
-    private UserDetailsService userDetailsService;
+    UserDetailsService userDetailsService;
 
     @Resource
-    private JwtTokenUtils jwtTokenUtil;
+    JwtTokenUtils jwtTokenUtil;
 
     @Resource
-    private SysUserMapper sysUserMapper;
+    SysUserMapper sysUserMapper;
 
     @Resource
-    private SysFunctionMapper sysFunctionMapper;
+    SysFunctionMapper sysFunctionMapper;
 
     @Resource
-    private SysRoleMapper sysRoleMapper;
+    SysRoleMapper sysRoleMapper;
+
+    @Resource
+    SysbookMapper sysbookMapper;
 
     /**
      * 用户登录
@@ -140,6 +147,19 @@ public class AuthService {
         // 获取用户所有角色
         String[] arrRoles = sysRoleMapper.selectAllRoleCodeByUserId(userId);
         authVO.setRoles(arrRoles);
+
+        // FIXME 此处以后修改为从缓存获取数据，增加启动及定时更新缓存逻辑
+        // 获取数据字典内容
+        Example example = new Example(Sysbook.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("status", Constants.COMMON_VALID);
+        List<Sysbook> listSysbook = sysbookMapper.selectByExample(example);
+        // 组成Map
+        Map<String, String> mapSysbook = new HashedMap<>();
+        listSysbook.forEach((sysbook -> {
+            mapSysbook.put(sysbook.getTypeCode() + "|" + sysbook.getListCode(), sysbook.getListName());
+        }));
+        authVO.setSysbook(mapSysbook);
 
         return authVO;
     }

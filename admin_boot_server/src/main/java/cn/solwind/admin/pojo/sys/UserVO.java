@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -39,10 +40,26 @@ public class UserVO {
     @ApiModelProperty(value = "状态")
     private Integer status; // 状态
 
+    @ApiModelProperty(value = "创建时间")
+    private Date createTime;    // 创建时间
+
+    @ApiModelProperty(value = "创建用户")
+    private String createUser;  // 创建用户
+
+    @ApiModelProperty(value = "修改时间")
+    private Date updateTime;    // 修改时间
+
+    @ApiModelProperty(value = "修改用户")
+    private String updateUser;  // 修改用户
+
     @ApiModelProperty(value = "备注")
     private String remark;  // 备注
+
+    @ApiModelProperty(value = "用户已经分配的角色")
+    private List<UserRoleVO> hadRoles;  // 用户已经分配的角色
 
     @ApiModelProperty(value = "角色")
     @NotNull(message = "必须至少选择一个角色")
     private List<Long> roles;   // 角色
+
 }

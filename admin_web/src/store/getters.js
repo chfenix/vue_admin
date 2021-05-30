@@ -11,6 +11,11 @@ const getters = {
   roles: state => state.user.roles,
   permission_routes: state => state.permission.routes,
   errorLogs: state => state.errorLog.logs,
-  vendorOptions: state => state.select.vendorOptions
+  vendorOptions: state => state.select.vendorOptions,
+  // sysbook code转义方法
+  showSysbook: (state) => (typeCode, listCode) => {
+    const key = typeCode + '|' + listCode
+    return state.user.sysbook[key]
+  }
 }
 export default getters

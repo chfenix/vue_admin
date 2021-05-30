@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 登录用户信息VO
@@ -29,4 +30,7 @@ public class AuthVO {
 
     @ApiModelProperty(value="按钮List")
     private List<ButtonVO> buttons;
+
+    @ApiModelProperty(value = "数据字典内容")
+    private Map<String, String> sysbook;
 }
